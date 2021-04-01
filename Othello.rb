@@ -47,7 +47,7 @@ class Othello
         @board = Array.new(@size)
         for i in (0...@board.length)
             @board[i] = Array.new(@size)
-            @board[i].fill(0)
+            @board[i].fill('-')
         end
 
         # initialize the grid
@@ -63,6 +63,63 @@ class Othello
         @board[@size/2][@size/2] = BLACK;
 
     end
+    #Checks a direction given by paramR, paramC
+    def check_dir(row, col, disc, paramR, paramC)
+        done = false
+        r = row + paramR
+        c = col + paramC
+        while(!done)
+            
+            if(paramR == 1)
+                if(r >= @size)
+                    done = true
+                    break
+                end
+            end
+            
+            if(paramR == -1)
+                if(r < 0)
+                    done = true
+                    break
+                end
+            end
+            
+            if(paramC == 1)
+                if(c >= @size)
+                    done = true
+                    break
+                end
+            end
+            
+            if(paramC == -1)
+                if(c < 0)
+                    done = true
+                    break
+                end
+            end
+            #check if a matching disc is found after one leap in a direction
+            if(@board[r][c] == disc)
+                return true
+            end
+
+            if(@board[r][c] == EMPTY)
+                return false
+            end
+
+            r += paramR
+            c += paramC
+            #Stop condition
+            if (paramR >= @size or paramC >= @size)
+                done = true
+                break
+            end
+            
+
+        end
+        return false
+        
+    end
+
 
     # Returns true if placing the disc of current player at row,col is valid;
     # else returns false
@@ -74,8 +131,68 @@ class Othello
     # else returns false
     def isValidMoveForDisc(row, col, disc)
 
-        # TO DO: COMPLETE THIS PART OF THE METHOD
+        maincheck = false
+        #Use check dir for each direction on the grid
+        #down check
+        if (row - 1 > 0 and @board[row-1][col] != EMPTY and @board[row-1][col] != disc)
+            check = check_dir(row, col, disc, -1, 0)
+            if(check)
+                maincheck = true
+            end
+        end
+        #up check
+        if(row-1 > 0 and col + 1 < @size and @board[row-1][col+1] != EMPTY and @board[row-1][col+1] != disc)
+            check = check_dir(row,col,disc,-1,1)
+            if(check)
+                maincheck = true
+            end
+        end
+        
+        if(row-1 > 0 and col - 1 > 0 and @board[row-1][col-1] != EMPTY and @board[row-1][col-1] != disc)
+            check = check_dir(row,col,disc,-1,-1)
+            if(check)
+                maincheck = true
+            end
+        end
+        
+        if(row + 1 < @size and @board[row+1][col] != EMPTY and @board[row+1][col] != disc)
+            check = check_dir(row,col,disc,1,0)
+            if(check)
+                maincheck = true
+            end
+        end
 
+        if(row+1 < @size and col-1 > 0 and @board[row+1][col-1] != EMPTY and @board[row+1][col-1] != disc)
+            check = check_dir(row,col,disc,1,-1)
+            if(check)
+                maincheck = true
+            end
+        end
+
+        if(row+1 < @size and col+1 < @size and @board[row+1][col+1] != EMPTY and @board[row+1][col+1] != disc)
+            check = check_dir(row,col,disc,1,1)
+            if(check)
+                maincheck = true
+            end
+        end
+
+        if(col-1 > 0 and @board[row][col-1] != EMPTY and @board[row][col-1] != disc)
+            check = check_dir(row,col,disc,0,-1)
+            if(check)
+                maincheck = true
+            end
+        end
+
+        if(col+1 < @size and @board[row][col+1] != EMPTY and @board[row][col+1] != disc)
+            check = check_dir(row,col,disc,0,1)
+            if(check)
+                maincheck = true
+            end
+        end
+
+        if(maincheck)
+            return true
+        end
         # DO NOT DELETE - if control reaches this statement, then it is not a valid move
         return false
     end
@@ -86,6 +203,137 @@ class Othello
         if (!isValidMove(row, col))
             return
         end
+        #Check direction to tell if discs need to be flipped
+        up_check = check_dir(row,col,@disc,-1,0)
+        if(up_check)
+            i = row - 1
+            while(i > 0)
+                if(@board[i][col] == @disc)
+                    break
+                end
+
+                if(@board[i][col] != @disc and @board[i][col] != EMPTY)
+                    @board[i][col] = @disc
+                end
+                i -= 1
+            end
+        end
+        
+        down_check = check_dir(row, col, @disc, 1, 0)
+        if(down_check)
+            i = row + 1
+            while(i < @size)
+                if(@board[i][col] == @disc)
+                    break
+                end
+                if(@board[i][col] != @disc and @board[i][col] != EMPTY)
+                    @board[i][col] = @disc
+                end
+                i += 1
+            end
+        end
+
+        left_check = check_dir(row, col, @disc, 0, -1)
+        if(left_check)
+            i = col - 1
+            while(i > 0)
+                if(@board[row][i] == @disc)
+                    break
+                end
+                if(@board[row][i] != @disc and @board[row][i] != EMPTY)
+                    @board[row][i] = @disc
+                end
+                i -= 1
+            end
+        end
+
+        right_check = check_dir(row,col,@disc,0,1)
+        if(right_check)
+            i = col + 1
+            while(i < @size)
+                if(@board[row][i] == @disc)
+                    break
+                end
+                if(@board[row][i] != @disc and @board[row][i] != EMPTY)
+                    @board[row][i] = @disc
+                end
+                i += 1
+        end
+        
+        up_left = check_dir(row,col,@disc,-1,-1)
+        if(up_left)
+            i = row-1
+            j = col+1
+            done = false
+            while(!done)
+                if(i < 0 or j < 0)
+                    done = true
+                    break
+                end
+                
+                if(@board[i][j] == @disc)
+                    break
+                end
+                
+                if(@board[i][j] != @disc and @board[i][j] != EMPTY)
+                    @board[i][j] = @disc
+                end
+                
+                i -= 1
+                j -= 1
+
+            end
+        end
+        down_left = check_dir(row, col, @disc, 1, -1)
+        
+        if(down_left)
+            i = row+1
+            j = col-1
+            done = false
+            while(!done)
+                if(i >= @size or j < 0)
+                    done = true
+                    break
+                end
+
+                if(@board[i][j] == @disc)
+                    break
+                end
+
+                if(@board[i][j] != @disc and @board[i][j] != EMPTY)
+                    @board[i][j] = @disc
+                end
+                i += 1
+                j -= 1
+            end
+
+        end
+
+        down_right = check_dir(row,col,@disc,1,1)
+        if(down_right)
+            i = row+1
+            j = col+1
+            done = false
+            while(!done)
+                if(i >= @size or j >= @size)
+                    done = true
+                    break
+                end
+
+                if(@board[i][j] == disc)
+                    break
+                end
+
+                if(@board[i][j] != @disc and @board[i][j] != EMPTY)
+                    @board[i][j] = @disc
+                end
+                i += 1
+                j += 1
+            end
+        end
+    end
+
+
 
         # place the current player's disc at row,col
         @board[row][col] = @disc
@@ -121,16 +369,32 @@ class Othello
     # Returns true if a valid move for the specified disc is available;
     # else returns false
     def isValidMoveAvailableForDisc(disc)
+        valid = false
+        i = 0
+        while(i < @size)
+            j = 0
+            while(j < @size)
+                if(@board[i][j] == EMPTY)
+                    if(isValidMove(i,j))
+                        valid = true
+                    end
+                end
+                j += 1
+            end
+            i += 1
+        end
 
-        # TO DO: COMPLETE THIS PART OF THE METHOD
-
+        if(valid)
+            return true
+        end
+        
         # DO NOT DELETE - if control reaches this statement, then a valid move is not available
         return false;
     end
 
     # Returns true if the board is fully occupied with discs; else returns false
     def isBoardFull()
-
+        return false
         # TO DO: COMPLETE THIS PART OF THE METHOD
 
         return true;
