@@ -121,20 +121,20 @@ class OthelloTest < Minitest::Test
 
     def test_isValidMoveAvailable_3
         game = Othello.new(4, 1, 'B')
-        game.placeDiscAt(1,3)
-        game.placeDiscAt(0,3)
-        game.placeDiscAt(0,2)
-        game.placeDiscAt(0,1)
-        game.placeDiscAt(3,0)
-        game.placeDiscAt(3,2)
-        game.placeDiscAt(1,0)
-        game.placeDiscAt(2,0)
-        game.placeDiscAt(3,1)
-        game.placeDiscAt(3,3)
-        game.prepareNextTurn()
-        game.placeDiscAt(0,0)
-        game.prepareNextTurn()
-        game.placeDiscAt(2,3)
+        game.placeDiscAt(1,3) #2, 4
+        game.placeDiscAt(0,3) #1, 4
+        game.placeDiscAt(0,2) #1, 3
+        game.placeDiscAt(0,1) #1, 2
+        game.placeDiscAt(3,0) #4, 1
+        game.placeDiscAt(3,2) #4, 3
+        game.placeDiscAt(1,0) #2, 1
+        game.placeDiscAt(2,0) #3, 1
+        game.placeDiscAt(3,1) #4, 2
+        game.placeDiscAt(3,3) #4, 4 ERROR
+        game.prepareNextTurn() #
+        game.placeDiscAt(0,0) #1, 1
+        game.prepareNextTurn() #
+        game.placeDiscAt(2,3) #3, 4
         assert_equal(false, game.isValidMoveAvailable())
     end
 

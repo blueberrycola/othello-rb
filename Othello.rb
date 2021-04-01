@@ -258,12 +258,13 @@ class Othello
                     @board[row][i] = @disc
                 end
                 i += 1
+            end
         end
         
         up_left = check_dir(row,col,@disc,-1,-1)
         if(up_left)
             i = row-1
-            j = col+1
+            j = col-1
             done = false
             while(!done)
                 if(i < 0 or j < 0)
@@ -284,6 +285,27 @@ class Othello
 
             end
         end
+        up_right = check_dir(row, col, @disc, -1, 1)
+        if(up_right)
+            i = row-1
+            j = col+1
+            done = false
+            while(!done)
+                if(i < 0 or j >= @size)
+                    done = true
+                    break
+                end
+                if(@board[i][j] == @disc)
+                    break
+                end
+                if(@board[i][j] != @disc and @board[i][j] != EMPTY)
+                    @board[i][j] = @disc
+                end
+                i -= 1
+                j += 1
+            end
+        end
+
         down_left = check_dir(row, col, @disc, 1, -1)
         
         if(down_left)
@@ -297,6 +319,7 @@ class Othello
                 end
 
                 if(@board[i][j] == @disc)
+                    done = true
                     break
                 end
 
@@ -320,7 +343,7 @@ class Othello
                     break
                 end
 
-                if(@board[i][j] == disc)
+                if(@board[i][j] == @disc)
                     break
                 end
 
@@ -331,19 +354,21 @@ class Othello
                 j += 1
             end
         end
-    end
+
+    
 
 
 
         # place the current player's disc at row,col
         @board[row][col] = @disc
 
-        # TO DO: COMPLETE THIS PART OF THE METHOD
+        
 
         # DO NOT DELETE - prepares for next turn if game is not over
         if (!isGameOver())
             prepareNextTurn();
         end
+
     end
 
     # Sets @turn and @disc instance variables for next player
@@ -394,8 +419,17 @@ class Othello
 
     # Returns true if the board is fully occupied with discs; else returns false
     def isBoardFull()
-        return false
-        # TO DO: COMPLETE THIS PART OF THE METHOD
+        i = 0
+        while(i < @size)
+            j = 0
+            while(j < @size)
+                if(@board[i][j] == EMPTY)
+                    return false
+                end
+                j += 1
+            end
+            i += 1
+        end
 
         return true;
     end
@@ -411,8 +445,32 @@ class Othello
     # If there is a winner, it returns Othello::WHITE or Othello::BLACK.
     # In case of a tie, it returns Othello::TIE
     def checkWinner()
+        whitetot = 0
+        blacktot = 0
+        i = 0
+        while(i < @size)
+            j = 0
+            while(j < @size)
+                if(@board[i][j] == BLACK)
+                    blacktot += 1
+                end
+                if(@board[i][j] == WHITE)
+                    whitetot += 1
+                end
 
-        # TO DO: COMPLETE THIS METHOD
+                j += 1
+            end
+            i += 1
+        end
+        if (whitetot < blacktot)
+            return BLACK
+        elsif (blacktot < whitetot)
+            return WHITE
+        else
+            return TIE
+        end
+
+        
 
     end
 
